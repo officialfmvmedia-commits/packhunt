@@ -8,8 +8,8 @@ export const X_URL = 'https://x.com/trypackhunt';
 export const X_HANDLE = '@trypackhunt';
 
 // Token contract address (CA).
-export const CA = 'FpebfxSyVgfnQwTtUFiWX9gu9Vojnx7jLTV7yGBapump';
-export const PUMP_URL = 'https://pump.fun/coin/FpebfxSyVgfnQwTtUFiWX9gu9Vojnx7jLTV7yGBapump';
+export const CA = ''; // awaiting CA
+export const PUMP_URL = '';
 
 export const BRAND = {
   name: 'Pack Hunt',            // display name
