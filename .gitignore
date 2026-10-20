@@ -1,5 +1,13 @@
 node_modules/
 data/
 server/data/
+*.log
 .env
+.env.*
 *.key
+*.pem
+*keypair*.json
+id.json
+wallet*.json
+.DS_Store
+packhunt-logo.png

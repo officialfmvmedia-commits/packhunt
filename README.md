@@ -1,77 +1,66 @@
-# Pack Hunt
+# Pack Hunt · https://huntpacks.fun
 
-A 3D open-world browser game. Creator fees from the token pay for card packs. The packs get opened, and every card is dropped somewhere on one shared low-poly island. Whoever reaches a card first with Phantom connected keeps it.
+A shared 3D island in the browser. Creator fees go to a public Solana treasury, the fees buy **real card packs**, and every card we pull gets dropped live somewhere on the island. The first verified Phantom wallet to reach a card wins the real card. We contact the winner and ship it.
 
-> **Name note:** the brand comes from one constant, `BRAND` in `site/assets/config.js`. To rename everything, run `node tools/rename-brand.mjs "New Name"`. It updates the config, the HTML title, meta and og fallbacks, and the favicon. After that, re-render `og.png` and `logo-512.png` with `tools/render-brand.cjs`.
+- Treasury (public address only): `4uz4p6vjb2MbLh5rVAF4fdEuAduRvEx7GBWbbTRr9dnQ`. The site and server **never** need its private key.
+- Official X: [@trypackhunt](https://x.com/trypackhunt) (`X_URL` in `site/assets/config.js`)
+- There is no mock data. The vault numbers come from Solana mainnet, and the drops and finds are real admin and player events.
 
-## What's here
-
+## Run locally
 ```
-site/                     static site, no build step (Three.js r160 vendored in site/vendor)
-  index.html              landing page: live 3D hero, how it works, card set, Fee Vault (DEMO), PLAY
-  play.html               the game
-  favicon.svg             code-drawn logo (assets/brand.js); assets/logo-512.png, assets/og.png
-  data/drops.json         MOCK pack pulls and card drop locations (regenerate: node tools/gen-drops.mjs)
-  assets/config.js        BRAND, network config, palette, rarity weights
-  assets/terrain.js       deterministic island heightfield, shared by client and server
-  assets/cards.js         24-card "Island Set 01" catalog, procedural canvas card faces and creature art
-  assets/wallet.js        Phantom connect and signMessage verify (never requests a transaction)
-  assets/audio.js         optional warm ambient pad (off by default, lowpassed, low gain)
-  assets/game/*.js        world, avatar, creatures, drops, net (live and solo), main loop and UI
-server/                   Node WebSocket world server (package "ws"); also serves ../site
-tools/                    headless tests, screenshot and brand render scripts, drop generator, rename helper
-shots/                    headless Chrome screenshots
+npm install
+ADMIN_TOKEN=$(openssl rand -hex 32) npm start          # http://localhost:8787  (site + API + WebSocket on one port)
 ```
+`npm install && npm start` also works with nothing set. In that case admin routes stay disabled and data goes to `./data`.
 
-## Run it
+## Environment
+| var | default | notes |
+|---|---|---|
+| `PORT` | 8787 | Render sets this |
+| `DATA_DIR` | `./data` | `world.json` (atomic writes + `.bak`) and `media/` (card images). Use `/var/data` on Render |
+| `ADMIN_TOKEN` | unset, admin disabled | at least 24 chars; generate with `openssl rand -hex 32`. Compared in constant time |
+| `RPC_URL` | `https://api.mainnet-beta.solana.com` | the public RPC is rate-limited; use Helius or another paid RPC in production |
+| `VAULT_POLL_MS` | 45000 | treasury poll interval |
+| `ALLOWED_ORIGINS` | `https://huntpacks.fun,https://www.huntpacks.fun` | WS origin allow-list (localhost/127.0.0.1 are always allowed) |
+| `PUBLIC_URL` | `https://huntpacks.fun` | |
+| `TRUST_PROXY` | auto on Render | use X-Forwarded-For for per-IP limits |
+| `MAX_PLAYERS` / `MAX_CONN_PER_IP` | 300 / 8 | over the cap, players see "Island is full" and retry automatically |
 
-**Static only (solo mode):**
+## Drop real cards (admin)
 ```
-cd site && python3 -m http.server 8000      # open http://localhost:8000
+export ADMIN_TOKEN=...  PACKHUNT_URL=https://huntpacks.fun
+node tools/drop.mjs --name "Charizard ex" --set "Obsidian Flames" --rarity legendary \
+  --image ./zard.jpg --qty 1 --pack "Obsidian Flames Booster" --cost-sol 0.5 --tx <purchase proof> \
+  --serial PSA-12345 --value-usd 120 --near "Signal Tower"
+node tools/drop.mjs --file pack.json      # a whole pack: { pack, costSol, tx, near, cards: [...] }
 ```
-With no world server available, the game switches to **solo demo** automatically. You get 5 simulated wandering hunters, mock pack pulls every 2.5 minutes, and claims saved in localStorage under your connected wallet.
+- `--image` takes a URL or a local file (png/jpg/webp/gif, max 8 MB). Images are stored in `DATA_DIR/media`. If a card has no image, a procedural face is used.
+- Each call is one "pack opened". `--cost-sol` is added to "Spent on packs".
+- Each card lands on a random valid land spot, spread apart, or near a landmark with `--near`: plaza, obelisk, arch, tower, vault, henge.
+- Everyone online gets the announcement instantly, for example "A LEGENDARY just dropped near Signal Tower!".
+- `node tools/admin.mjs drops | remove <dropId> | vault`
 
-**Shared world (multiplayer):**
-```
-cd server && npm install && npm start       # http://localhost:8787 (site + WebSocket on one port)
-```
-Everyone who opens that URL shares one island. The server syncs positions, names and colors at 10 Hz. Card claims are **server-authoritative**:
-- the first claimer wins and later attempts get `already-claimed`
-- a wallet is required
-- the player must be within about 6 m of the card
+## Claims and fulfilment
+- To claim, a player connects Phantom and signs a server-issued nonce message. It is never a transaction. The server verifies the ed25519 signature and issues a 14-day session.
+- Claims are server-authoritative: the first claim wins, the player must be within 5 m by the server's tracked position, and there are speed/teleport checks, rate limits, and a cooldown.
+- Each find stores the winner's wallet, the card and the time. The public Found log (landing page and `F` in game) shows shortened wallets and status.
+- `node tools/fulfil.mjs list` and `node tools/fulfil.mjs <findId> shipped --note "tracking 123"`. Statuses: pending, contacted, shipped, sent, delivered, cancelled.
+- To confirm a winner, ask them to sign a message with the winning wallet. Never ask for a seed phrase or a transaction.
 
-It verifies Phantom's ed25519 `signMessage` signature using Node's built-in crypto, so it needs no extra dependencies. State persists to `server/data/state.json`. Delete that file to reset the island.
+## API
+`/healthz` · `/api/vault` · `/api/state` · `/api/feed` · `/api/finds` · `/api/drops` · `/api/binder?wallet=` · `/media/*`. Admin endpoints (Bearer token): `POST /admin/drop`, `GET /admin/drops`, `DELETE /admin/drops/:id`, `GET /admin/finds`, `POST /admin/finds/:id`.
 
-Environment variables:
-- `PORT` (default 8787)
-- `PULL_INTERVAL_MS`: how often a mock pack pull adds cards (default 240000)
-- `MAX_DROPS` (default 90)
-
-If you host the static site somewhere else and the server separately, set `NET.wsUrl` in `site/assets/config.js` to the server's `wss://` URL. Otherwise the client only tries a socket when the page is served by the bundled server, which it detects from the `x-packhunt-server` response header. That keeps static hosting free of console errors.
-
-## Controls
-- **WASD / arrows**: move
-- **Shift**: sprint
-- **Space**: jump
-- **Drag**: orbit camera
-- **Wheel**: zoom
-- **E**: talk to a Packling or grab a card
-- **I / Tab**: binder
-- **M**: sound
-- **Esc**: close
-
-On mobile you get a touch joystick, drag-to-look, and Jump and E buttons.
-
-Walk into a glowing card beam with Phantom connected and the card is claimed automatically. Packlings (Bitbun, Gpupup, Mintmoth, Hashowl, Ledgetoad, Tokkit) give hints and mark the nearest drop on your compass.
-
-## Demo / mock disclaimers
-- **Fee Vault numbers, pack pulls and drops are mock demo data**, labeled DEMO in the UI. Nothing reads or writes the chain, nothing moves funds, and the game never asks for a transaction.
-- Phantom is used only for `connect()` and an optional `signMessage` (sign-in proof).
-- Cards are off-chain records. In live mode they live in server state. In solo mode they live in browser localStorage.
-- All creatures, cards and logos are original, procedural code art.
+## Deploy (Render)
+`render.yaml` defines one Node web service: build `npm install`, start `npm start`, health check `/healthz`, a 1 GB disk at `/var/data`, and `DATA_DIR=/var/data`. Set `ADMIN_TOKEN` and `RPC_URL` in the dashboard (they are `sync: false`). A disk needs a paid plan (Starter), which also keeps the service from sleeping. For DNS, point `huntpacks.fun` and `www` at the Render service as custom domains. Render provides TLS, and the client uses same-origin `wss://`.
 
 ## Tests
 ```
-NODE_PATH=/path/to/puppeteer-core/node_modules node tools/test-game.cjs http://127.0.0.1:8000 shots 1   # mock-Phantom walkthrough + screenshots
-node tools/ws-race.mjs ws://localhost:8787                                                          # first-claimer-wins race (needs server running)
+ADMIN_TOKEN=... MAX_CONN_PER_IP=200 DATA_DIR=/tmp/phtest npm start      # in one shell
+ADMIN_TOKEN=... NODE_PATH=<dir containing puppeteer-core> node tests/e2e.mjs shots 50
 ```
+This runs 2 headless browsers with mock Phantom keys (throwaway ed25519) and 50 ws bots. It checks admin drops, instant announcements, the claim race, anti-cheat, forged signatures, the binder, fulfilment, the landing page's live data, and console errors. Wipe `DATA_DIR` afterwards.
+
+## Layout
+`server/` (env, store, solana vault poller, admin, game world, static) · `site/` (no build step; Three.js vendored) · `tools/` (drop, fulfil, admin, brand render/rename) · `tests/e2e.mjs`
+
+Controls: WASD to move, Shift to sprint, Space to jump, drag to look, E to talk or grab, I/Tab for my finds, F for the Found log, M for sound. Touch controls on mobile.

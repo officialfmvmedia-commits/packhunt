@@ -99,9 +99,9 @@ kbd { font: 700 12px var(--mono); padding: 3px 7px; border-radius: 6px; backgrou
 .treasury:hover { box-shadow: 0 0 0 1px var(--mint) inset; }
 .vupd { margin-top: 14px; font-size: 11px; opacity: .5; }
 .feed li.empty { grid-template-columns: 1fr; opacity: .8; }
-.feed li .pk.found { background: linear-gradient(160deg, var(--gold), #a8740a); }
+.feed li .pk.found.pk { background: linear-gradient(160deg, var(--gold), #a8740a); }
 .feed li .pk { background: linear-gradient(160deg, var(--c), #0b2a22); }
-.found { padding: 140px 6vw 40px; }
+.foundsec { padding: 140px 6vw 40px; }
 .flist { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
 .fitem { display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 16px; background: var(--deep); box-shadow: 0 0 0 1px color-mix(in srgb, var(--c) 35%, transparent) inset; }
 .fitem img, .fitem .ph { width: 46px; height: 64px; border-radius: 6px; object-fit: cover; background: linear-gradient(160deg, var(--c), #0b2a22); flex: none; }
@@ -109,4 +109,9 @@ kbd { font: 700 12px var(--mono); padding: 3px 7px; border-radius: 6px; backgrou
 .fitem .st { margin-left: auto; font: 800 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-style: normal; }
 .fempty { grid-column: 1 / -1; padding: 50px; text-align: center; border-radius: 18px; background: rgba(0,0,0,.25); box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset; display: flex; flex-direction: column; gap: 8px; }
 .fempty b { font: 800 28px var(--display); } .fempty span { opacity: .6; font-size: 13px; }
-@media (max-width: 700px) { .vnums { grid-template-columns: 1fr 1fr; } .found { padding: 90px 22px 30px; } }
+@media (max-width: 700px) { .vnums { grid-template-columns: 1fr 1fr; } .foundsec { padding: 90px 22px 30px; } }
+.nav .xlink { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 999px; box-shadow: 0 0 0 1px rgba(255,255,255,.14) inset; }
+.nav .xlink:hover { box-shadow: 0 0 0 1px var(--mint) inset; }
+.foot { flex-wrap: wrap; }
+.foot .xfollow { margin-left: 8px; display: inline-flex; align-items: center; gap: 8px; color: var(--mint); text-decoration: none; font-weight: 700; }
+@media (max-width: 860px) { .nav .xlink span { display: none; } }

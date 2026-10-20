@@ -18,3 +18,4 @@ a { color: inherit; }
 .grain::after { content: ''; position: fixed; inset: -50%; pointer-events: none; z-index: 50; opacity: .06; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .wordmark { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; line-height: .82; text-transform: uppercase; }
 .live-tag { font: 800 9px/1 var(--mono); letter-spacing: .14em; color: var(--ink); background: var(--mint); padding: 4px 6px; border-radius: 4px; }
+.x-ico { width: 14px; height: 14px; flex: none; vertical-align: -2px; }

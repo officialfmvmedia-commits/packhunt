@@ -515,7 +515,7 @@ function loop() {
   drops.update(dt, t, camera.position);
   updateRemotes(dt);
   sendT += dt; if (started && sendT > .1) { sendT = 0; net.sendPos(posMsg()); }
-  uiT += dt; if (started && uiT > 1 / 20) { uiT = 0; updateCompass(); drawMinimap(t); updatePrompt(); $('coords').textContent = `${Math.round(player.position.x)} · ${Math.round(player.position.z)} · ${drops.map.size ? drops.map.size + ' CARDS ON ISLAND' : 'FIRST DROP INCOMING'}`; }
+  uiT += dt; if (started && uiT > 1 / 20) { uiT = 0; updateCompass(); drawMinimap(t); updatePrompt(); $('coords').textContent = `${Math.round(player.position.x)} · ${Math.round(player.position.z)} · ${drops.map.size ? drops.map.size + (drops.map.size === 1 ? ' CARD' : ' CARDS') + ' ON ISLAND' : 'FIRST DROP INCOMING'}`; }
   composer.render();
   adapt(dt);
 }

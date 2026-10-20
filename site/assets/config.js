@@ -3,13 +3,17 @@
 //  Rename the project by editing BRAND below; every page, title,
 //  logo, card face and UI string reads from here.
 // ─────────────────────────────────────────────────────────────
+// Official X account (links in nav, footer, game HUD, start screen; twitter:site meta).
+export const X_URL = 'https://x.com/trypackhunt';
+export const X_HANDLE = '@trypackhunt';
+
 export const BRAND = {
   name: 'Pack Hunt',            // display name
   wordmark: ['PACK', 'HUNT'],   // two-line logo lettering
   short: 'PH',                  // favicon / monogram letters
   tagline: 'Creator fees rip packs. Packs hit the island. Find it, keep it.',
   token: 'the token',           // how the token is referred to in copy
-  x: '',                        // e.g. 'https://x.com/yourhandle' (blank = hidden)
+  x: X_URL,                     // official X account (blank = hidden)
   year: 2026,
 };
 
@@ -21,8 +25,8 @@ export const SOLSCAN_TX = sig => `https://solscan.io/tx/${sig}`;
 // How winners claim their physical/real card. Shown in the reveal + Found log.
 // Set CLAIM.contact to your official channel (e.g. 'https://x.com/yourhandle').
 export const CLAIM = {
-  contact: '',          // official contact URL; blank -> generic copy
-  contactLabel: 'our official X account',
+  contact: X_URL,       // official contact URL; blank -> generic copy
+  contactLabel: 'our official X account ' + X_HANDLE,
 };
 
 export const NET = {
@@ -55,7 +59,7 @@ export function applyBrand(root = document) {
   root.querySelectorAll('[data-tagline]').forEach(el => { el.textContent = BRAND.tagline; });
   root.querySelectorAll('[data-token]').forEach(el => { el.textContent = BRAND.token; });
   root.querySelectorAll('[data-brand-x]').forEach(el => {
-    if (BRAND.x) el.href = BRAND.x; else el.style.display = 'none';
+    if (BRAND.x) { el.href = BRAND.x; el.target = '_blank'; el.rel = 'noopener'; } else el.style.display = 'none';
   });
   const t = document.querySelector('title');
   if (t) t.textContent = t.textContent.replace(/\{BRAND\}/g, BRAND.name);

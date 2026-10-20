@@ -46,7 +46,7 @@ function bot(name, { wallet } = {}) {
 }
 
 // ---------- browser client ----------
-async function client(browser, label, kp) {
+async function client(browser, label, kp) { const t0 = Date.now();
   const p = await browser.newPage(); await p.setViewport({ width: 1280, height: 800 });
   const errs = [];
   p.on('console', m => { if (m.type() === 'error') { errs.push(m.text()); console.log(`[${label} console.error]`, m.text()); } });
@@ -58,7 +58,7 @@ async function client(browser, label, kp) {
   }, kp.pk);
   await p.goto(BASE + '/play', { waitUntil: 'networkidle2', timeout: 120000 });
   await p.waitForFunction(() => !document.getElementById('enterBtn').disabled && window.__ph?.status === 'live', { timeout: 120000 });
-  return { p, errs, label, kp };
+  console.log(`· ${label} live in ${Date.now() - t0}ms`); return { p, errs, label, kp };
 }
 async function enter(c, name) { await c.p.evaluate(n => { document.getElementById('nameIn').value = n; }, name); await c.p.click('#enterBtn'); await sleep(500); }
 async function verify(c) { await c.p.click('#walletBtn'); await c.p.waitForFunction(() => document.getElementById('walletBtn').classList.contains('on'), { timeout: 20000 }); }
@@ -84,10 +84,11 @@ async function runTo(c, dropId, maxMs = 240000) {
   const badOrigin = await new Promise(r => { const w = new WebSocket(WSURL, { headers: { origin: 'https://evil.example' } }); w.on('open', () => r('open')); w.on('error', () => r('rejected')); w.on('unexpected-response', () => r('rejected')); });
   ok('ws rejects foreign origin', badOrigin === 'rejected');
 
-  const browser = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', protocolTimeout: 300000, args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const launch = () => puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', protocolTimeout: 300000, args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows'] });
+  const browser = await launch(), browser2 = await launch();
   const kA = keypair(), kB = keypair();
-  const A = await client(browser, 'A', kA), B = await client(browser, 'B', kB);
-  await enter(A, 'Alice'); await enter(B, 'Bob');
+  const A = await client(browser, 'A', kA), B = await client(browser2, 'B', kB);
+  console.log('· both clients loaded'); await enter(A, 'Alice'); await enter(B, 'Bob'); console.log('· entered');
   await verify(A); await verify(B);
   ok('Phantom sign-in verified server-side (2 clients)', true);
   await sleep(1500);
@@ -176,6 +177,6 @@ async function runTo(c, dropId, maxMs = 240000) {
   wander = false; bots.forEach(b => b.ws.close()); r1.ws.close(); r2.ws.close();
   const allErrs = [...A.errs, ...B.errs, ...lerr];
   ok('no console errors', allErrs.length === 0, allErrs.slice(0, 5).join(' | '));
-  await browser.close();
+  await browser.close(); await browser2.close();
   const failed = results.filter(r => !r.pass); console.log(`\n${results.length - failed.length}/${results.length} passed`); process.exit(failed.length ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

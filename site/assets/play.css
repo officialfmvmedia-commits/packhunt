@@ -176,3 +176,7 @@ kbd { font: 700 11px var(--mono); padding: 2px 6px; border-radius: 5px; backgrou
 .flog .r { font: 800 10px var(--mono); letter-spacing: .12em; color: var(--c); }
 .flog .stt { font: 800 10px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
 .flog .thumb { width: 34px; height: 48px; border-radius: 4px; object-fit: cover; background: #0b1f1c; vertical-align: middle; margin-right: 10px; }
+.pill.xbtn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; }
+.pill.xbtn .x-ico { width: 15px; height: 15px; }
+.start-x { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 12px; color: var(--mint, #7dffc1); text-decoration: none; opacity: .85; }
+.start-x:hover { opacity: 1; }
