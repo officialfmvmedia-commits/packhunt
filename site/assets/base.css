@@ -1,0 +1,20 @@
+@font-face { font-family: 'Syne'; src: url('./fonts/Syne-VariableFont_wght.ttf') format('truetype'); font-weight: 400 800; font-display: swap; }
+@font-face { font-family: 'Geist Mono'; src: url('./fonts/GeistMono-VariableFont_wght.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
+:root {
+  --ink: #07110f; --deep: #0b1f1c; --mint: #7dffc1; --lime: #d4ff4f; --gold: #ffc94a; --coral: #ff7a59; --violet: #a98bff; --sky: #9fe7ff; --paper: #f4f1e6;
+  --line: rgba(125,255,193,.18); --glass: rgba(9,26,23,.62);
+  --display: 'Syne', 'Arial Black', sans-serif; --mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ink); color: var(--paper); font-family: var(--mono); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.btn { --c: var(--mint); display: inline-flex; align-items: center; gap: .6em; font: 700 13px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); background: var(--c); border: 0; border-radius: 999px; padding: 14px 22px; cursor: pointer; text-decoration: none; box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset, 0 10px 30px -10px var(--c); transition: transform .15s, box-shadow .2s, filter .2s; }
+.btn:hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 0 0 1px rgba(255,255,255,.4) inset, 0 16px 40px -10px var(--c); }
+.btn.ghost { background: rgba(125,255,193,.06); color: var(--paper); box-shadow: 0 0 0 1px var(--line) inset; }
+.btn.ghost:hover { background: rgba(125,255,193,.12); }
+.btn.gold { --c: var(--gold); }
+.chip { display: inline-flex; align-items: center; gap: 8px; font: 600 11px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; background: rgba(125,255,193,.07); box-shadow: 0 0 0 1px var(--line) inset; color: var(--mint); }
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 10px var(--mint); }
+.grain::after { content: ''; position: fixed; inset: -50%; pointer-events: none; z-index: 50; opacity: .06; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.wordmark { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; line-height: .82; text-transform: uppercase; }
+.live-tag { font: 800 9px/1 var(--mono); letter-spacing: .14em; color: var(--ink); background: var(--mint); padding: 4px 6px; border-radius: 4px; }

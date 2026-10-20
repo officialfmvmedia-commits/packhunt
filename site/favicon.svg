@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 100 100" role="img" aria-label="Pack Hunt">
+<defs>
+  <radialGradient id="phbg" cx="35%" cy="25%" r="90%"><stop offset="0" stop-color="#16443a"/><stop offset=".55" stop-color="#0a1f1b"/><stop offset="1" stop-color="#040b09"/></radialGradient>
+  <linearGradient id="phpk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9fff0"/><stop offset=".45" stop-color="#7dffc1"/><stop offset="1" stop-color="#22a874"/></linearGradient>
+  <linearGradient id="phau" gradientUnits="userSpaceOnUse" x1="25" y1="25" x2="75" y2="75"><stop offset="0" stop-color="#fff1b0"/><stop offset=".5" stop-color="#ffc94a"/><stop offset="1" stop-color="#c98a12"/></linearGradient>
+  <filter id="phgl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="100" height="100" rx="22" fill="url(#phbg)"/>
+<g opacity=".18" stroke="#7dffc1" stroke-width=".4"><line x1="10" y1="0" x2="10" y2="100"/><line x1="20" y1="0" x2="20" y2="100"/><line x1="30" y1="0" x2="30" y2="100"/><line x1="40" y1="0" x2="40" y2="100"/><line x1="50" y1="0" x2="50" y2="100"/><line x1="60" y1="0" x2="60" y2="100"/><line x1="70" y1="0" x2="70" y2="100"/><line x1="80" y1="0" x2="80" y2="100"/><line x1="90" y1="0" x2="90" y2="100"/></g>
+<rect x="1" y="1" width="98" height="98" rx="21" fill="none" stroke="#7dffc1" stroke-opacity=".35" stroke-width="1"/>
+<g transform="rotate(-12 50 50)" filter="url(#phgl)">
+  <path d="M30,22 L33.33,18 L36.67,22 L40.00,18 L43.33,22 L46.67,18 L50.00,22 L53.33,18 L56.67,22 L60.00,18 L63.33,22 L66.67,18 L70.00,22 L70,78 L66.67,82 L63.33,78 L60.00,82 L56.67,78 L53.33,82 L50.00,78 L46.67,82 L43.33,78 L40.00,82 L36.67,78 L33.33,82 L30.00,78 Z" fill="url(#phpk)"/>
+  <path d="M30,22 L33.33,18 L36.67,22 L40.00,18 L43.33,22 L46.67,18 L50.00,22 L53.33,18 L56.67,22 L60.00,18 L63.33,22 L66.67,18 L70.00,22 L70,78 L66.67,82 L63.33,78 L60.00,82 L56.67,78 L53.33,82 L50.00,78 L46.67,82 L43.33,78 L40.00,82 L36.67,78 L33.33,82 L30.00,78 Z" fill="none" stroke="#04140f" stroke-opacity=".35" stroke-width="1"/>
+  <rect x="30" y="27" width="40" height="3" fill="#04140f" opacity=".35"/>
+  <rect x="30" y="70" width="40" height="3" fill="#04140f" opacity=".35"/>
+</g>
+<g fill="none" stroke="url(#phau)" stroke-width="5" stroke-linecap="round">
+  <circle cx="50" cy="50" r="17"/>
+  <line x1="50" y1="22" x2="50" y2="31"/><line x1="50" y1="69" x2="50" y2="78"/>
+  <line x1="22" y1="50" x2="31" y2="50"/><line x1="69" y1="50" x2="78" y2="50"/>
+</g>
+<circle cx="50" cy="50" r="5" fill="#04140f"/><circle cx="50" cy="50" r="2.6" fill="url(#phau)"/>
+</svg>

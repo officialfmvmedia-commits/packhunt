@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Play · {BRAND}</title>
+<meta name="description" content="Pack Hunt: real cards bought with creator fees are dropped on a shared 3D island. Find one first and it's yours.">
+<link rel="canonical" href="https://huntpacks.fun/play">
+<meta property="og:title" content="Play Pack Hunt">
+<meta property="og:description" content="Real cards. One island. Find it, keep it.">
+<meta property="og:url" content="https://huntpacks.fun/play">
+<meta property="og:image" content="https://huntpacks.fun/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#07110f">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo-512.png">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/play.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }</script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="hud" class="hidden">
+  <div class="tl">
+    <a class="brand" href="index.html"><span class="mark" id="hudMark"></span><span class="bn" data-brand-upper>PACK HUNT</span></a>
+    <div class="status"><span class="dot" id="netDot"></span><span id="netText">CONNECTING…</span> · <span id="online">–</span> on island</div>
+    <div class="vault panel" id="vaultPanel">
+      <div class="ph"><span>FEE VAULT</span><span class="live-tag">LIVE · SOLANA</span><button class="mini" id="vaultToggle" title="Collapse">–</button></div>
+      <div class="vbody">
+        <div class="vrow"><span>Treasury</span><a id="vTreasury" target="_blank" rel="noopener" title="View on Solscan">—</a></div>
+        <div class="vrow"><span>Balance</span><b id="vBal">—</b></div>
+        <div class="vrow"><span>Fees received</span><b id="vFees">—</b></div>
+        <div class="vrow"><span>Spent on packs</span><b id="vSpent">—</b></div>
+        <div class="vrow"><span>Packs opened</span><b id="vPacks">—</b></div>
+        <div class="vrow"><span>Cards on island</span><b id="vLeft">—</b></div>
+        <div class="vrow"><span>Cards found</span><b id="vFound">—</b></div>
+        <div class="vfeed-h">LIVE FEED <button class="linkbtn" id="foundBtn">Found log →</button></div>
+        <ul class="vfeed" id="vFeed"></ul>
+        <div class="fine" id="vUpdated">Read from Solana mainnet.</div>
+      </div>
+    </div>
+  </div>
+  <div class="tr">
+    <button class="pill wallet" id="walletBtn"><span class="ph-ico"></span><span id="walletText">Connect Phantom</span></button>
+    <button class="pill icon" id="soundBtn" title="Sound (M)">♪<i>OFF</i></button>
+    <button class="pill icon" id="binderBtn" title="My finds (I / Tab)">▦<i id="binderCount">0</i></button>
+  </div>
+  <div class="compass" id="compass"><div class="ctrack" id="ctrack"></div><div class="cneedle"></div></div>
+  <div class="conn hidden" id="conn"><span class="spin"></span><span id="connText">Reconnecting…</span></div>
+  <div class="announce hidden" id="announce"><div class="an-k" id="anK">NEW DROP</div><div class="an-t" id="anT"></div></div>
+  <div class="prompt hidden" id="prompt"><kbd>E</kbd><span id="promptText">Talk</span></div>
+  <div class="toasts" id="toasts"></div>
+  <div class="br"><canvas id="minimap" width="220" height="220"></canvas><div class="coords" id="coords"></div></div>
+  <div class="bl keys">
+    <span><kbd>WASD</kbd> move</span><span><kbd>Shift</kbd> sprint</span><span><kbd>Space</kbd> jump</span><span><kbd>Drag</kbd> look</span><span><kbd>E</kbd> talk / grab</span><span><kbd>I</kbd> my finds</span><span><kbd>F</kbd> found log</span>
+  </div>
+  <div class="touch" id="touch">
+    <div class="stick" id="stick"><div class="knob" id="knob"></div></div>
+    <button class="tbtn jump" id="tJump">⤒</button>
+    <button class="tbtn act" id="tAct">E</button>
+  </div>
+</div>
+
+<div class="dialog hidden" id="dialog">
+  <canvas id="dlgPortrait" width="180" height="180"></canvas>
+  <div class="dtext"><div class="dname" id="dlgName"></div><div class="dline" id="dlgLine"></div><div class="dsub" id="dlgSub"></div></div>
+  <div class="dclose">E / Esc</div>
+</div>
+
+<div class="start" id="start">
+  <div class="start-card">
+    <div class="start-mark" id="startMark"></div>
+    <h1 class="wordmark"><span>PACK</span><span class="g">HUNT</span></h1>
+    <p>Creator fees buy real card packs. Every card we pull gets hidden somewhere on this island. <b>Get to it first and the real card is yours.</b></p>
+    <label class="field"><span>Hunter name</span><input id="nameIn" maxlength="18" autocomplete="off" spellcheck="false"></label>
+    <div class="start-row">
+      <button class="btn ghost" id="startWallet"><span class="ph-ico"></span><span id="startWalletText">Connect Phantom</span></button>
+      <button class="btn play" id="enterBtn">ENTER ISLAND</button>
+    </div>
+    <div class="start-note">You can explore as a guest. To claim a card you need Phantom connected. It only asks you to <b>sign a message</b> to prove the wallet is yours. It never asks for a transaction or your seed phrase.</div>
+    <div class="loading" id="loading"><div class="bar"><i id="loadBar"></i></div><span id="loadText">Generating island…</span></div>
+  </div>
+</div>
+
+<div class="reveal hidden" id="reveal">
+  <div class="rays"></div>
+  <div class="rv-top"><span id="rvRarity">RARE</span> · REAL CARD FOUND</div>
+  <div class="flip" id="flip"><div class="face back" id="rvBack"></div><div class="face front" id="rvFront"></div></div>
+  <div class="rv-name" id="rvName"></div>
+  <div class="rv-sub" id="rvSub"></div>
+  <div class="rv-how" id="rvHow"></div>
+  <button class="btn" id="rvOk">KEEP HUNTING</button>
+</div>
+
+<div class="binder hidden" id="binder">
+  <div class="bd-head">
+    <div><div class="kicker" id="bdKicker">MY FINDS</div><h2 class="wordmark" id="bdTitle">Your binder</h2></div>
+    <button class="pill" id="bdClose">CLOSE · ESC</button>
+  </div>
+  <div class="bd-owner" id="bdOwner"></div>
+  <div class="bd-how" id="bdHow"></div>
+  <div class="bd-grid" id="bdGrid"></div>
+  <div class="bd-zoom hidden" id="bdZoom"></div>
+</div>
+
+<div class="modal hidden" id="noPhantom">
+  <div class="mcard"><h3>Phantom not detected</h3><p>To claim cards you need the Phantom wallet extension, or open this page in Phantom’s in-app browser on mobile. You can keep exploring as a guest.</p>
+  <div class="mrow"><a class="btn" href="https://phantom.app/" target="_blank" rel="noopener">Get Phantom</a><button class="btn ghost" id="npClose">Keep exploring</button></div></div>
+</div>
+
+<script type="module" src="assets/game/main.js"></script>
+</body>
+</html>

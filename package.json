@@ -1,0 +1,16 @@
+{
+  "name": "packhunt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pack Hunt: shared 3D island where real cards bought with creator fees are dropped. Find it, keep it.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server/server.js",
+    "drop": "node tools/drop.mjs",
+    "fulfil": "node tools/fulfil.mjs",
+    "admin": "node tools/admin.mjs",
+    "test:e2e": "node tests/e2e.mjs shots 50"
+  },
+  "dependencies": { "ws": "^8.18.0" }
+}

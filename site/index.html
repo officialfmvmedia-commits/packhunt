@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{BRAND} — find it, keep it</title>
+<meta name="description" content="Pack Hunt: creator fees buy real card packs, and every card we pull gets hidden on a shared 3D island. Find one first and it's yours.">
+<link rel="canonical" href="https://huntpacks.fun/">
+<meta property="og:url" content="https://huntpacks.fun/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pack Hunt">
+<meta property="og:description" content="Creator fees buy real card packs. The cards get hidden on one shared island. Find it, keep it.">
+<meta property="og:image" content="https://huntpacks.fun/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#07110f">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo-512.png">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/landing.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }</script>
+</head>
+<body class="grain">
+<header class="nav">
+  <a class="nav-brand" href="#"><span class="mark" id="navMark"></span><span data-brand-upper>PACK HUNT</span></a>
+  <nav>
+    <a href="#how">How it works</a><a href="#cards">Drops</a><a href="#vault">Fee Vault</a><a href="#found">Found</a>
+    <a data-brand-x target="_blank" rel="noopener">X</a>
+    <a class="btn" href="play.html">Play now <span aria-hidden="true">→</span></a>
+  </nav>
+</header>
+
+<section class="hero">
+  <canvas id="heroGL"></canvas>
+  <div class="hero-scrim"></div>
+  <div class="hero-inner">
+    <div class="chip"><span class="dot"></span> Live island · Solana · Phantom</div>
+    <h1 class="wordmark hero-word"><span class="w1">PACK</span><span class="w2"><svg class="ret" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#ffc94a" stroke-width="9" stroke-linecap="round"><circle cx="50" cy="50" r="30"/><line x1="50" y1="4" x2="50" y2="22"/><line x1="50" y1="78" x2="50" y2="96"/><line x1="4" y1="50" x2="22" y2="50"/><line x1="78" y1="50" x2="96" y2="50"/></g><circle cx="50" cy="50" r="7" fill="#ffc94a"/></svg>HUNT</span></h1>
+    <p class="lede"><b>Real cards. One island.</b> Creator fees from <span data-token>the token</span> buy real card packs. Every card we pull gets hidden somewhere in one shared 3D world. <em>Get to it first and it’s yours.</em></p>
+    <div class="cta">
+      <a class="btn play" href="play.html"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>PLAY</a>
+      <a class="btn ghost" href="#how">How it works</a>
+    </div>
+    <div class="hero-stats">
+      <div><b id="sCards">–</b><span>cards on the island</span></div>
+      <div><b id="sPacks">–</b><span>packs opened</span></div>
+      <div><b id="sFound">–</b><span>cards found</span></div>
+    </div>
+  </div>
+  <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+</section>
+
+<section class="how" id="how">
+  <div class="sec-head"><span class="kicker">01 / LOOP</span><h2 class="wordmark">The whole game<br>fits on a card.</h2></div>
+  <ol class="steps">
+    <li><span class="n">01</span><div class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="12" rx="14" ry="5"/><path d="M10 12v8c0 2.8 6.3 5 14 5s14-2.2 14-5v-8"/><path d="M10 20v8c0 2.8 6.3 5 14 5s14-2.2 14-5v-8"/><path d="M10 28v8c0 2.8 6.3 5 14 5s14-2.2 14-5v-8"/></svg></div><h3>Fees stack up</h3><p>Creator fees from <span data-token>the token</span> go to a public treasury wallet. You can check it on Solscan any time.</p></li>
+    <li><span class="n">02</span><div class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6l3 3 3-3 3 3 3-3 3 3 3-3 3 3 3-3v36l-3-3-3 3-3-3-3 3-3-3-3 3-3-3-3 3z"/><path d="M12 15h24M12 33h24"/></svg></div><h3>Real packs get opened</h3><p>The fees buy real card packs. Each pack we open goes in the log with its cost and proof.</p></li>
+    <li><span class="n">03</span><div class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="12"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8"/><circle cx="24" cy="24" r="2.5" fill="currentColor"/></svg></div><h3>Cards hit the island</h3><p>Every card from the pack is dropped live somewhere on the island, and everyone online gets an alert. Look for the beam.</p></li>
+    <li><span class="n">04</span><div class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="6" width="24" height="34" rx="4"/><path d="M24 15l3 6 6 1-4.5 4 1 6-5.5-3-5.5 3 1-6-4.5-4 6-1z"/></svg></div><h3>Find it, keep it</h3><p>Reach it first with a verified Phantom wallet and the real card is yours. We contact the winner and ship it. Every find is listed below.</p></li>
+  </ol>
+</section>
+
+<section class="cards" id="cards">
+  <div class="sec-head"><span class="kicker">02 / LIVE DROPS</span><h2 class="wordmark">On the island<br><span class="dim">right now.</span></h2></div>
+  <div class="fan" id="fan"></div>
+  <p class="note" id="fanNote">Loading the island…</p>
+  <div class="tiers">
+    <div style="--c:#9fe7ff"><b>COMMON</b></div>
+    <div style="--c:#7dffc1"><b>RARE</b></div>
+    <div style="--c:#b69bff"><b>EPIC</b></div>
+    <div style="--c:#ffc94a"><b>LEGENDARY</b></div>
+  </div>
+  <p class="note">The beam color shows the card’s rarity. Walk up to the Packlings and press <kbd>E</kbd>. Some of them have spotted a drop and will point you to it.</p>
+</section>
+
+<section class="vault" id="vault">
+  <div class="vault-card">
+    <div class="vault-l">
+      <span class="kicker">03 / FEE VAULT <span class="live-tag">LIVE · SOLANA MAINNET</span></span>
+      <h2 class="wordmark">Fees in.<br>Packs out.</h2>
+      <p>The treasury is a public Solana wallet, so anyone can check it. Balance and incoming SOL are read straight from mainnet. Every pack we open is logged here with its cost.</p>
+      <a class="treasury" id="treasury" target="_blank" rel="noopener"><span>TREASURY</span><b id="tAddr">—</b><i>View on Solscan ↗</i></a>
+      <div class="vnums">
+        <div><span>Balance</span><b id="vBal">—</b></div>
+        <div><span>Fees received</span><b id="vFees">—</b></div>
+        <div><span>Spent on packs</span><b id="vSpent">—</b></div>
+        <div><span>Packs opened</span><b id="vPacks">—</b></div>
+        <div><span>Cards on island</span><b id="vLeft">—</b></div>
+        <div><span>Cards found</span><b id="vFound">—</b></div>
+      </div>
+      <div class="vupd" id="vUpd"></div>
+    </div>
+    <div class="vault-r"><div class="feed-h">LIVE FEED</div><ul class="feed" id="feed"></ul></div>
+  </div>
+</section>
+
+<section class="found" id="found">
+  <div class="sec-head"><span class="kicker">04 / FOUND LOG</span><h2 class="wordmark">Found.<br><span class="dim">Real cards, real winners.</span></h2></div>
+  <div class="flist" id="flist"></div>
+  <p class="note">The first verified wallet to reach a card wins it, and the server records the claim. We contact the winner, confirm they own the wallet with a signed message, and ship the card. Status updates show up here. We never ask for a seed phrase or a transaction.</p>
+</section>
+
+<section class="final">
+  <h2 class="wordmark">The island<br>is <span class="mint">loaded.</span></h2>
+  <p>Runs in your browser. You can explore as a guest. To claim a card, connect Phantom. You only sign a message to prove the wallet is yours, never a transaction.</p>
+  <a class="btn play big" href="play.html"><svg width="18" height="18" viewBox="0 0 16 16"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>PLAY <span data-brand-upper>PACK HUNT</span></a>
+</section>
+
+<footer class="foot">
+  <span class="mark sm" id="footMark"></span><span>© <span id="yr">2026</span> <span data-brand>Pack Hunt</span>. Original game and art. Cards are real collectibles, not NFTs.</span>
+</footer>
+
+<script type="module" src="assets/landing.js"></script>
+</body>
+</html>

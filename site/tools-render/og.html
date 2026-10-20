@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../assets/base.css">
+<style>body{margin:0;width:1200px;height:630px;overflow:hidden;background:radial-gradient(80% 90% at 75% 50%,#16443a,#07110f 70%);display:flex;align-items:center;font-family:var(--mono)}
+.l{padding-left:70px;width:600px}.m{width:110px;height:110px}.m svg{width:100%;height:100%}
+h1{font:800 112px/.84 var(--display);margin:22px 0 18px;text-transform:uppercase;color:#f4f1e6}h1 span{display:block;background:linear-gradient(100deg,#7dffc1,#d4ff4f,#ffc94a);-webkit-background-clip:text;color:transparent}
+p{color:rgba(244,241,230,.75);font-size:20px;line-height:1.5;margin:0;max-width:470px}
+.r{position:relative;flex:1;height:100%}.r canvas{position:absolute;width:250px;border-radius:16px;box-shadow:0 30px 60px -10px rgba(0,0,0,.8)}
+</style></head><body><div class="l"><div class="m" id="m"></div><h1 id="w"></h1><p id="t"></p></div><div class="r" id="r"></div>
+<script type="importmap">{ "imports": { "three": "../vendor/three.module.js" } }</script>
+<script type="module">
+import { BRAND } from '../assets/config.js'; import { logoSVG } from '../assets/brand.js'; import { backCanvas } from '../assets/cards.js';
+await document.fonts.load('800 40px Syne'); await document.fonts.load('600 20px "Geist Mono"');
+m.innerHTML = logoSVG({ size: 110 }); w.innerHTML = `${BRAND.wordmark[0]}<span>${BRAND.wordmark[1]}</span>`; t.textContent = 'Real cards. One island. Find it, keep it.';
+[['#7dffc1', 40, 150, -12], ['#a98bff', 300, 140, 12], ['#ffc94a', 160, 90, 0]].forEach(([col, x, y, rot]) => { const c = backCanvas(500); c.style.boxShadow = `0 0 0 6px ${col}, 0 0 60px ${col}88, 0 30px 60px -10px rgba(0,0,0,.8)`; c.style.left = x + 'px'; c.style.top = y + 'px'; c.style.transform = `rotate(${rot}deg)`; r.appendChild(c); });
+document.body.dataset.ready = 1;
+</script></body></html>

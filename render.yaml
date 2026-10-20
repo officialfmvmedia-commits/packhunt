@@ -1,0 +1,31 @@
+# Render Blueprint: one Node web service with a persistent disk for world.json + card images.
+# A disk requires a paid instance (Starter or above). Free instances sleep and have no disk.
+services:
+  - type: web
+    name: packhunt
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    disk:
+      name: packhunt-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATA_DIR
+        value: /var/data
+      - key: PUBLIC_URL
+        value: https://huntpacks.fun
+      - key: ALLOWED_ORIGINS
+        value: https://huntpacks.fun,https://www.huntpacks.fun
+      - key: TRUST_PROXY
+        value: "1"
+      - key: ADMIN_TOKEN        # set in the dashboard: openssl rand -hex 32
+        sync: false
+      - key: RPC_URL            # e.g. a Helius mainnet URL; falls back to the public RPC if unset
+        sync: false
