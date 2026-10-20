@@ -115,3 +115,16 @@ kbd { font: 700 12px var(--mono); padding: 3px 7px; border-radius: 6px; backgrou
 .foot { flex-wrap: wrap; }
 .foot .xfollow { margin-left: 8px; display: inline-flex; align-items: center; gap: 8px; color: var(--mint); text-decoration: none; font-weight: 700; }
 @media (max-width: 860px) { .nav .xlink span { display: none; } }
+
+/* contract address chip */
+.ca-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0 6px}
+.ca-chip{display:inline-flex;align-items:center;gap:10px;max-width:100%;padding:8px 10px 8px 8px;border-radius:999px;border:1px solid rgba(125,255,193,.35);background:rgba(7,17,15,.6);backdrop-filter:blur(8px);color:#f4f1e6;cursor:pointer;font:500 13px/1 'Geist Mono',ui-monospace,monospace;transition:border-color .2s,background .2s}
+.ca-chip:hover{border-color:#7dffc1;background:rgba(11,31,28,.85)}
+.ca-chip code{font:inherit;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.ca-lbl{background:#7dffc1;color:#07110f;font-weight:700;padding:5px 8px;border-radius:999px;letter-spacing:.08em;font-size:11px}
+.ca-copy{color:#ffc94a;font-weight:600;letter-spacing:.1em;font-size:11px}
+.ca-chip.ok{border-color:#ffc94a}.ca-chip.ok .ca-copy{color:#7dffc1}
+.ca-buy{font:600 12px/1 'Geist Mono',ui-monospace,monospace;letter-spacing:.06em;color:#7dffc1;text-decoration:none;padding:9px 12px;border-radius:999px;border:1px solid rgba(125,255,193,.25)}
+.ca-buy:hover{border-color:#7dffc1}
+.ca-chip.sm{font-size:11px;padding:6px 8px 6px 6px}
+@media (max-width:640px){.ca-chip{font-size:11px}.ca-chip code{max-width:52vw}}

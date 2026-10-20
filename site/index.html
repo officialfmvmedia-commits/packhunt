@@ -42,6 +42,7 @@
       <a class="btn play" href="play.html"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>PLAY</a>
       <a class="btn ghost" href="#how">How it works</a>
     </div>
+    <div class="ca-row"><button class="ca-chip" type="button" data-ca="FpebfxSyVgfnQwTtUFiWX9gu9Vojnx7jLTV7yGBapump" title="Copy contract address"><span class="ca-lbl">CA</span><code>FpebfxSyVgfnQwTtUFiWX9gu9Vojnx7jLTV7yGBapump</code><span class="ca-copy">COPY</span></button><a class="ca-buy" href="https://pump.fun/coin/FpebfxSyVgfnQwTtUFiWX9gu9Vojnx7jLTV7yGBapump" target="_blank" rel="noopener">pump.fun ↗</a></div>
     <div class="hero-stats">
       <div><b id="sCards">–</b><span>cards on the island</span></div>
       <div><b id="sPacks">–</b><span>packs opened</span></div>
@@ -109,9 +110,11 @@
 
 <footer class="foot">
   <span class="mark sm" id="footMark"></span><span>© <span id="yr">2026</span> <span data-brand>Pack Hunt</span>. Original game and art. Cards are real collectibles, not NFTs.</span>
+  <button class="ca-chip sm" type="button" data-ca="FpebfxSyVgfnQwTtUFiWX9gu9Vojnx7jLTV7yGBapump" title="Copy contract address"><span class="ca-lbl">CA</span><code>FpebfxSyVgfnQwTtUFiWX9gu9Vojnx7jLTV7yGBapump</code><span class="ca-copy">COPY</span></button>
   <a class="xfollow" data-brand-x href="https://x.com/trypackhunt" target="_blank" rel="noopener"><svg class="x-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Follow @trypackhunt</a>
 </footer>
 
+<script>document.addEventListener('click',e=>{const b=e.target.closest('.ca-chip');if(!b)return;const t=b.dataset.ca,l=b.querySelector('.ca-copy');const done=()=>{l.textContent='COPIED';b.classList.add('ok');setTimeout(()=>{l.textContent='COPY';b.classList.remove('ok')},1400)};(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(done).catch(()=>{const r=document.createRange();r.selectNodeContents(b.querySelector('code'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');done()})});</script>
 <script type="module" src="assets/landing.js"></script>
 </body>
 </html>
