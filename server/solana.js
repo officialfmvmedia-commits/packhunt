@@ -24,6 +24,10 @@ export function startVault({ rpcUrl, treasury, store, intervalMs, onUpdate, log 
   async function poll() {
     if (running || stopped) return; running = true;
     const v = store.db.vault;
+    if (v.treasury !== treasury) { // treasury changed: start totals fresh for the new wallet
+      Object.assign(v, { treasury, balanceLamports: null, totalReceivedLamports: 0, txCount: 0, newestSig: null, sigs: {} });
+      store.save(); log(`[vault] tracking treasury ${treasury}`);
+    }
     try {
       const bal = await rpc('getBalance', [treasury, { commitment: 'confirmed' }]);
       v.balanceLamports = bal.value;
