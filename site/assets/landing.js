@@ -6,6 +6,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { BRAND, RARITY, TREASURY, SOLSCAN, applyBrand } from './config.js';
 import { logoSVG, setFavicon } from './brand.js';
 import { realCardCanvas, backCanvas } from './cards.js';
+import { createHeroIsland } from './heroIsland.js';
 
 applyBrand(); setFavicon();
 document.getElementById('navMark').innerHTML = logoSVG({ size: 38, uid: 'nm' });
@@ -89,8 +90,8 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(200, 32, 16), new THREE.Shad
       float sd = max(0., dot(normalize(vec3(vP.x,0.,vP.z)), normalize(vec3(.55,0.,-1.))));
       vec3 hor = mix(fogc, vec3(.55,.36,.22), pow(sd, 6.));
       vec3 c = mix(mid, top, smoothstep(.05,.6,h)); c = mix(hor, c, smoothstep(0.,.25,h)); if (h < 0.) c = fogc;
-      float sun = smoothstep(.985,1.,dot(vP, normalize(vec3(.55,.12,-1.)))); c += vec3(1.,.8,.5)*sun*.9;
-      c += vec3(1.,.7,.4)*pow(max(0.,dot(vP, normalize(vec3(.55,.12,-1.)))),18.)*.18;
+      vec3 sd3 = normalize(vec3(.62,.045,-1.)); float sdot = max(0.,dot(vP, sd3)); float sun = smoothstep(.99935,.9997,sdot); c += vec3(1.,.78,.5)*sun*.75;
+      c += vec3(1.,.62,.35)*pow(sdot,60.)*.22 + vec3(1.,.6,.35)*pow(sdot,8.)*.05;
       gl_FragColor = vec4(c,1.); }`
 }));
 scene.add(sky);
@@ -125,56 +126,22 @@ const ocean = new THREE.Mesh(new THREE.PlaneGeometry(400, 400, 1, 1), new THREE.
 }));
 ocean.rotation.x = -Math.PI / 2; ocean.position.y = -2; scene.add(ocean);
 
-// lights
-scene.add(new THREE.HemisphereLight(0x9fe7ff, 0x0b1f1c, 0.9));
-const sun = new THREE.DirectionalLight(0xffd2a0, 2.2); sun.position.set(10, 12, -10); scene.add(sun);
-const rim = new THREE.PointLight(0x7dffc1, 30, 30); rim.position.set(6, 3, 4); scene.add(rim);
+// lights: warm key sun (shadows) + low warm rim from the horizon sun + teal sky fill
+const WATER_Y = -0.7;
+scene.add(new THREE.HemisphereLight(0xb8f4ff, 0x1a4a3a, 1.5));
+const sun = new THREE.DirectionalLight(0xffdcb0, 3.2); sun.position.set(10.5 - 9, 14, 10); sun.target.position.set(10.5, 0, 0); scene.add(sun, sun.target);
+sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 40 }); sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.03;
+const rim = new THREE.DirectionalLight(0xffa860, 1.6); rim.position.set(10.5 + 8, 4, -14); rim.target.position.set(10.5, 0, 0); scene.add(rim, rim.target);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+ocean.position.y = WATER_Y;
 
-// floating island chunk (right side)
-const island = new THREE.Group(); island.position.set(10.5, -0.3, 0); scene.add(island);
-{ const rockG = new THREE.ConeGeometry(4.2, 5.5, 9, 3); rockG.rotateX(Math.PI); const pa = rockG.attributes.position;
-  for (let i = 0; i < pa.count; i++) { pa.setXYZ(i, pa.getX(i) * (1 + (Math.random() - .5) * .25), pa.getY(i) + (Math.random() - .5) * .3, pa.getZ(i) * (1 + (Math.random() - .5) * .25)); }
-  rockG.computeVertexNormals();
-  const rock = new THREE.Mesh(rockG, new THREE.MeshStandardMaterial({ color: 0x3a3f3a, flatShading: true, roughness: .95 })); rock.position.y = -2.75; island.add(rock);
-  const top = new THREE.Mesh(new THREE.CylinderGeometry(4.3, 4.2, .6, 9), new THREE.MeshStandardMaterial({ color: 0x4fbf6a, flatShading: true })); island.add(top);
-  const sand = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 4.4, .25, 9), new THREE.MeshStandardMaterial({ color: 0xf2d9a0, flatShading: true })); sand.position.y = -.3; island.add(sand);
-  // palm
-  const palm = new THREE.Group(); palm.position.set(-1.6, .3, -.6); island.add(palm);
-  for (let i = 0; i < 7; i++) { const s = new THREE.Mesh(new THREE.CylinderGeometry(.16 - i * .01, .19 - i * .01, .6, 6), new THREE.MeshStandardMaterial({ color: 0x8a6440, flatShading: true })); s.position.set(i * i * .02, .3 + i * .55, 0); s.rotation.z = -i * .05; palm.add(s); }
-  for (let i = 0; i < 7; i++) { const f = new THREE.Mesh(new THREE.ConeGeometry(.35, 2.6, 4), new THREE.MeshStandardMaterial({ color: 0x2fae5a, flatShading: true })); f.geometry.translate(0, 1.3, 0); f.scale.z = .25; const a = i / 7 * Math.PI * 2; f.position.set(.75, 3.9, 0); f.rotation.set(0, a, 1.9); palm.add(f); }
-  // ruin pillars
-  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + .4; const h = 1 + Math.random() * 1.4; const pl = new THREE.Mesh(new THREE.BoxGeometry(.45, h, .45), new THREE.MeshStandardMaterial({ color: 0xd8d2bf, flatShading: true })); pl.position.set(Math.cos(a) * 2.6 + .8, h / 2 + .3, Math.sin(a) * 2.6); island.add(pl); }
-  // a little Packling
-  const crit = new THREE.Mesh(new THREE.IcosahedronGeometry(.55, 1), new THREE.MeshStandardMaterial({ color: 0x7dffc1, flatShading: true })); crit.position.set(1.2, .85, 1.8); crit.scale.y = .9; island.add(crit);
-  for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(.09, 8, 8), new THREE.MeshBasicMaterial({ color: 0x07110f })); e.position.set(1.2 + sx * .2, .98, 2.3); island.add(e);
-    const ear = new THREE.Mesh(new THREE.ConeGeometry(.12, .7, 5), new THREE.MeshStandardMaterial({ color: 0x7dffc1, flatShading: true })); ear.position.set(1.2 + sx * .22, 1.6, 1.8); ear.rotation.z = -sx * .2; island.add(ear); }
-  island.userData.crit = crit;
-}
-
-// hero cards with beams
-const heroCards = [];
-const texOf = c => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
-const backTex = texOf(backCanvas(512));
-const heroColors = [0xffc94a, 0xa98bff, 0x7dffc1];
-heroColors.forEach((col, i) => {
-  const g = new THREE.Group();
-  const geo = new THREE.PlaneGeometry(2.2, 3.08);
-  const front = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: backTex, transparent: true, side: THREE.DoubleSide, fog: false, toneMapped: false }));
-  g.add(front);
-  const edge = new THREE.Mesh(new THREE.PlaneGeometry(2.32, 3.2), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .9, side: THREE.DoubleSide, fog: false, toneMapped: false })); edge.position.z = -0.01; g.add(edge);
-  scene.add(g);
-  heroCards.push({ g, i, base: new THREE.Vector3(10.5 + Math.cos(i * 2.1) * 3.4, 4.2 + i * .9, Math.sin(i * 2.1) * 2.4) });
-});
-// beam from island
-const beam = new THREE.Mesh(new THREE.CylinderGeometry(.6, .6, 40, 24, 1, true), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-  uniforms: { t: { value: 0 } },
-  vertexShader: `varying vec2 u; void main(){u=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-  fragmentShader: `varying vec2 u; uniform float t; void main(){ float a = (1.-u.y)*.35 + .05; a *= .6+.4*sin(u.y*40.-t*4.); gl_FragColor = vec4(1.,.8,.3, a*(1.-u.y)); }` }));
-beam.position.set(10.5, 20, 0); scene.add(beam);
+// hero island (stylized low-poly, see heroIsland.js)
+const backTex = (() => { const t = new THREE.CanvasTexture(backCanvas(512)); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; })();
+const hero = createHeroIsland(scene, { backTex, waterY: WATER_Y }); hero.root.position.set(10.5, WATER_Y, 1); hero.root.scale.setScalar(1.12);
 
 // motes
-const motes = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ size: .08, color: 0xd4ff4f, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false }));
-{ const n = 260, p = new Float32Array(n * 3); for (let i = 0; i < n; i++) { p[i * 3] = 10.5 + (Math.random() - .5) * 18; p[i * 3 + 1] = Math.random() * 12 - 1; p[i * 3 + 2] = (Math.random() - .5) * 14; } motes.geometry.setAttribute('position', new THREE.BufferAttribute(p, 3)); }
+const motes = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ size: .06, color: 0xd4ff4f, transparent: true, opacity: .6, blending: THREE.AdditiveBlending, depthWrite: false }));
+{ const n = 160, p = new Float32Array(n * 3); for (let i = 0; i < n; i++) { p[i * 3] = 10.5 + (Math.random() - .5) * 18; p[i * 3 + 1] = Math.random() * 10 + .5; p[i * 3 + 2] = (Math.random() - .5) * 14; } motes.geometry.setAttribute('position', new THREE.BufferAttribute(p, 3)); }
 scene.add(motes);
 
 const composer = new EffectComposer(renderer);
@@ -182,10 +149,17 @@ composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.45, 0.5, 0.92); composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
+// camera framing: desktop keeps the island to the right of the copy; narrow/portrait screens pull back and centre it low
+let frame;
+function framing(w, h) {
+  if (w >= 900) return { x: 0, y: 4.2, z: 22, look: new THREE.Vector3(5.5, 3.4, 0), par: 1 };
+  const portrait = h > w;
+  return portrait ? { x: 10.5, y: 5.6, z: 44, look: new THREE.Vector3(10.5, 10.8, 0), par: .3 } : { x: 6, y: 4.2, z: 24, look: new THREE.Vector3(7.5, 3.4, 0), par: .5 };
+}
 function resize() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
   renderer.setSize(w, h, false); composer.setSize(w, h); camera.aspect = w / h;
-  camera.position.x = w < 900 ? 6 : 0; camera.updateProjectionMatrix();
+  frame = framing(w, h); camera.position.set(frame.x, frame.y, frame.z); camera.updateProjectionMatrix();
 }
 addEventListener('resize', resize); resize();
 const mouse = { x: 0, y: 0 }; addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth - .5; mouse.y = e.clientY / innerHeight - .5; });
@@ -194,18 +168,12 @@ new IntersectionObserver(([e]) => visible = e.isIntersecting).observe(canvas);
 function loop() {
   requestAnimationFrame(loop); if (!visible) return;
   const t = clock.getElapsedTime();
-  ocean.material.uniforms.t.value = t; beam.material.uniforms.t.value = t;
-  heroCards.forEach(({ g, i, base }) => {
-    const a = t * .25 + i * 2.1;
-    g.position.set(10.5 + Math.cos(a) * 3.6, base.y + Math.sin(t * 1.2 + i) * .25, Math.sin(a) * 2.6);
-    g.rotation.y = -a + Math.PI / 2 + Math.sin(t * .7 + i) * .3; g.rotation.z = Math.sin(t * .9 + i) * .08;
-  });
-  island.position.y = -0.3 + Math.sin(t * .6) * .15; island.rotation.y = t * .05;
-  island.userData.crit.position.y = .85 + Math.abs(Math.sin(t * 3)) * .25;
+  ocean.material.uniforms.t.value = t;
+  hero.update(t, camera);
   motes.rotation.y = t * .03; motes.position.y = Math.sin(t * .3) * .3;
-  camera.position.y += ((4.2 - mouse.y * 1.6) - camera.position.y) * .04;
-  const tx = (canvas.clientWidth < 900 ? 6 : 0) + mouse.x * 2.2; camera.position.x += (tx - camera.position.x) * .04;
-  camera.lookAt(5.5, 3.4, 0);
+  camera.position.y += ((frame.y - mouse.y * 1.6 * frame.par) - camera.position.y) * .04;
+  camera.position.x += ((frame.x + mouse.x * 2.2 * frame.par) - camera.position.x) * .04;
+  camera.lookAt(frame.look);
   composer.render();
 }
 loop();
