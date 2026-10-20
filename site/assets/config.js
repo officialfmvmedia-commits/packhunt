@@ -22,7 +22,7 @@ export const BRAND = {
 };
 
 // Public treasury that receives creator fees. Public address only, never a key.
-export const TREASURY = '6LTBrU7LdeXsvPWCp7NBuQr3iimoJwBKe6PxENjZktpB';
+export const TREASURY = 'HXjDKgKuHghBx52coJmYLbH83g7KkKSWrHce5zkDkgJj';
 export const SOLSCAN = (addr = TREASURY) => `https://solscan.io/account/${addr}`;
 export const SOLSCAN_TX = sig => `https://solscan.io/tx/${sig}`;
 

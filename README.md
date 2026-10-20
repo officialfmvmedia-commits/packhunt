@@ -2,7 +2,7 @@
 
 A shared 3D island in the browser. Creator fees go to a public Solana treasury, the fees buy **real card packs**, and every card we pull gets dropped live somewhere on the island. The first verified Phantom wallet to reach a card wins the real card. We contact the winner and ship it.
 
-- Treasury (public address only): `6LTBrU7LdeXsvPWCp7NBuQr3iimoJwBKe6PxENjZktpB`. The site and server **never** need its private key.
+- Treasury (public address only): `HXjDKgKuHghBx52coJmYLbH83g7KkKSWrHce5zkDkgJj`. The site and server **never** need its private key.
 - Official X: [@trypackhunt](https://x.com/trypackhunt) (`X_URL` in `site/assets/config.js`)
 - There is no mock data. The vault numbers come from Solana mainnet, and the drops and finds are real admin and player events.
 

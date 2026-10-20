@@ -78,7 +78,7 @@ async function runTo(c, dropId, maxMs = 240000) {
 (async () => {
   const h = await api('/healthz'); ok('healthz', h.ok === true);
   const v0 = await api('/api/vault');
-  ok('vault reads Solana mainnet', v0.rpcOk === true && v0.treasury === '6LTBrU7LdeXsvPWCp7NBuQr3iimoJwBKe6PxENjZktpB', `balance ${v0.balanceSol} SOL · received ${v0.totalReceivedSol} SOL · ${v0.incomingTxCount} incoming tx`);
+  ok('vault reads Solana mainnet', v0.rpcOk === true && v0.treasury === 'HXjDKgKuHghBx52coJmYLbH83g7KkKSWrHce5zkDkgJj', `balance ${v0.balanceSol} SOL · received ${v0.totalReceivedSol} SOL · ${v0.incomingTxCount} incoming tx`);
   ok('island starts empty', v0.cardsOnIsland === 0 && v0.packsOpened === 0);
   const unauth = await fetch(BASE + '/admin/drops', { headers: { authorization: 'Bearer nope' } }); ok('admin rejects bad token', unauth.status === 401);
   const badOrigin = await new Promise(r => { const w = new WebSocket(WSURL, { headers: { origin: 'https://evil.example' } }); w.on('open', () => r('open')); w.on('error', () => r('rejected')); w.on('unexpected-response', () => r('rejected')); });
